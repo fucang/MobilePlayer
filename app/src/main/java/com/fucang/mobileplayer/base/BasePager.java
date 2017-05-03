@@ -19,13 +19,13 @@ public abstract class BasePager {
     /**
      * 上下文
      */
-    public Context context;
+    public final Context context;
 
-    private View view;
+    public View rootview;
 
     public BasePager(Context context) {
         this.context = context;
-        this.view = initView();
+        this.rootview = initView();
     }
 
     /**
