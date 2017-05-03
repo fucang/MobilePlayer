@@ -15,6 +15,7 @@ import android.widget.RadioGroup;
 
 import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.base.BasePager;
+import com.fucang.mobileplayer.base.ReplaceFragment;
 import com.fucang.mobileplayer.page.AudioPager;
 import com.fucang.mobileplayer.page.NetAudioPager;
 import com.fucang.mobileplayer.page.NetVideoPager;
@@ -57,7 +58,11 @@ public class MainActivity extends FragmentActivity {
         rg_bottom_tag.check(R.id.rb_video);
     }
 
-    public BasePager getBasePager() {
+    /**
+     * 根据不同的位置得到不同的页面
+     * @return
+     */
+    private BasePager getBasePager() {
         BasePager basePager = basePagers.get(position);
         if (basePager != null) {
             basePager.initData(); //  初始化数据
@@ -99,20 +104,7 @@ public class MainActivity extends FragmentActivity {
         FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
 
         // 3、替换
-        Fragment fragment = new Fragment() {
-            @Nullable
-            @Override
-            public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-                BasePager basePager = getBasePager();
-                if (basePager != null) {
-                    // 各个页面的视图
-                    return basePager.rootview;
-                }
-                return null;
-            }
-        };
-
-       fragmentTransaction.replace(R.id.fl_main_content, fragment);
+       fragmentTransaction.replace(R.id.fl_main_content, new ReplaceFragment(getBasePager()));
 
         // 4、提交事务
         fragmentTransaction.commit();
