@@ -1,7 +1,6 @@
 package com.fucang.mobileplayer.activity;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.os.Bundle;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
