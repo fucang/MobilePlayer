@@ -6,25 +6,23 @@ package com.fucang.mobileplayer.page;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
-import android.text.format.Formatter;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.fucang.mobileplayer.R;
+import com.fucang.mobileplayer.adapter.VideoPagerAdapter;
 import com.fucang.mobileplayer.base.BasePager;
 import com.fucang.mobileplayer.domain.MediaItem;
 import com.fucang.mobileplayer.utils.Logger;
-import com.fucang.mobileplayer.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -41,8 +39,6 @@ public class VideoPager extends BasePager {
 
     private ArrayList<MediaItem> mediaItems; // 保存视频数据的集合
 
-    private Utils utils; // 转换
-
     private VideoPagerAdapter videoPagerAdapter; // 适配器
 
     private Handler handler = new Handler() {
@@ -53,7 +49,7 @@ public class VideoPager extends BasePager {
             if (mediaItems != null && mediaItems.size() > 0) {
                 // 有数据
                 // 设置适配器
-                videoPagerAdapter = new VideoPagerAdapter();
+                videoPagerAdapter = new VideoPagerAdapter(context, mediaItems);
                 listView.setAdapter(videoPagerAdapter);
 
                 // 隐藏文本
@@ -69,7 +65,6 @@ public class VideoPager extends BasePager {
 
     public VideoPager(Context context) {
         super(context);
-        this.utils = new Utils();
     }
 
     @Override
@@ -78,7 +73,22 @@ public class VideoPager extends BasePager {
         this.listView = (ListView) view.findViewById(R.id.listview);
         this.tvNoMedia = (TextView) view.findViewById(R.id.tv_nomedia);
         this.pbLoading = (ProgressBar) view.findViewById(R.id.pb_loading);
+
+        // 设置listview的item的点击事件
+        listView.setOnItemClickListener(new MyOnItemClickListener());
         return view;
+    }
+
+    class MyOnItemClickListener implements AdapterView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+            MediaItem mediaItem = mediaItems.get(position);
+
+            // 1、调取系统所有播放器
+            Intent intent = new Intent();
+            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
+            context.startActivity(intent);
+        }
     }
 
     @Override
@@ -128,53 +138,5 @@ public class VideoPager extends BasePager {
                 handler.sendEmptyMessage(10);
             }
         }.start(); // thread
-    }
-
-    class VideoPagerAdapter extends BaseAdapter {
-
-        @Override
-        public int getCount() {
-            return mediaItems.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return null;
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return 0;
-        }
-
-        @Override
-        public View getView(int position, View view, ViewGroup viewGroup) {
-            ViewHoder viewHoder;
-            if (view == null) {
-                view = View.inflate(context, R.layout.item_video_pager, null);
-                viewHoder = new ViewHoder();
-                viewHoder.iv_icon = (ImageView) view.findViewById(R.id.iv_icon);
-                viewHoder.tv_name = (TextView) view.findViewById(R.id.tv_name);
-                viewHoder.tv_time = (TextView) view.findViewById(R.id.tv_time);
-                viewHoder.tv_size = (TextView) view.findViewById(R.id.tv_size);
-
-                view.setTag(viewHoder);
-            } else {
-                viewHoder = (ViewHoder) view.getTag();
-            }
-            // 根据position得到列表中相应的数据
-            MediaItem mediaItem = mediaItems.get(position);
-            viewHoder.tv_name.setText(mediaItem.getName());
-            viewHoder.tv_size.setText(Formatter.formatFileSize(context, mediaItem.getSize()));
-            viewHoder.tv_time.setText(utils.stringForTime((int) mediaItem.getDuration()));
-            return view;
-        }
-    }
-
-    static class ViewHoder {
-        ImageView iv_icon;
-        TextView tv_name;
-        TextView tv_time;
-        TextView tv_size;
     }
 }
