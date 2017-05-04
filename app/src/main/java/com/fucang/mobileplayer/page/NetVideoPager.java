@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.fucang.mobileplayer.base.BasePager;
+import com.fucang.mobileplayer.utils.Logger;
 
 /**
  * 网络视频页面
@@ -34,8 +35,8 @@ public class NetVideoPager extends BasePager {
 
     @Override
     public void initData() {
+        Logger.info("==========================初始化网络视频");
         super.initData();
         textView.setText("网络视频页面");
     }
-
 }

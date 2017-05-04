@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.fucang.mobileplayer.base.BasePager;
+import com.fucang.mobileplayer.utils.Logger;
 
 /**
  * 本地视频页面
@@ -34,6 +35,7 @@ public class VideoPager extends BasePager {
 
     @Override
     public void initData() {
+        Logger.info("==========================初始化本地视频");
         super.initData();
         textView.setText("本地视频页面");
     }

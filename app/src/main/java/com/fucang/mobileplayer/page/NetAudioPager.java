@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.fucang.mobileplayer.base.BasePager;
+import com.fucang.mobileplayer.utils.Logger;
 
 /**
  * 网络音乐页面
@@ -34,6 +35,7 @@ public class NetAudioPager extends BasePager {
 
     @Override
     public void initData() {
+        Logger.info("==========================初始化网络音频");
         super.initData();
         textView.setText("网络音频页面");
     }
