@@ -64,7 +64,7 @@ public class MainActivity extends FragmentActivity {
      */
     private BasePager getBasePager() {
         BasePager basePager = basePagers.get(position);
-        if (basePager != null) {
+        if (basePager != null && !basePager.isInitData()) {
             basePager.initData(); //  初始化数据
         }
         return basePager;

@@ -23,9 +23,12 @@ public abstract class BasePager {
 
     public View rootview;
 
+    private boolean isInitData;
+
     public BasePager(Context context) {
         this.context = context;
         this.rootview = initView();
+        this.isInitData = false;
     }
 
     /**
@@ -38,5 +41,10 @@ public abstract class BasePager {
      * 当子页面需要初始化数据时，重写该方法
      */
     public void initData() {
+        this.isInitData = true;
+    }
+
+    public boolean isInitData() {
+        return isInitData;
     }
 }
