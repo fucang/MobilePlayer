@@ -1,5 +1,9 @@
 package com.fucang.mobileplayer.activity;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -60,6 +64,7 @@ public class MainActivity extends FragmentActivity {
 
     /**
      * 根据不同的位置得到不同的页面
+     *
      * @return
      */
     private BasePager getBasePager() {
@@ -70,12 +75,32 @@ public class MainActivity extends FragmentActivity {
         return basePager;
     }
 
+    /**
+     * 解决Android6.0以上系统不能动态读取sdcard权限的问题即获取权限
+     *
+     * @param activity
+     * @return
+     */
+    public static boolean isGrantExternalRW(Activity activity) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && activity.checkSelfPermission(
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+
+            activity.requestPermissions(new String[]{
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+            }, 1);
+            return false;
+        }
+        return true;
+    }
+
     class MyOnCheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
 
         @Override
         public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
             switch (checkedId) {
                 case R.id.rb_audio: // 本地音频
+                    isGrantExternalRW(MainActivity.this);
                     position = 1;
                     break;
                 case R.id.rb_netvideo: // 网络视频
@@ -85,6 +110,9 @@ public class MainActivity extends FragmentActivity {
                     position = 3;
                     break;
                 default: // 默认为本地视频
+                    // 哪里需要读写内存卡的权限，就调用isGrantExternalRW方法
+                    // 就像这样，调到下一个页面，下一个页面需要读取内存卡的权限
+                    isGrantExternalRW(MainActivity.this);
                     position = 0;
                     break;
             }
@@ -104,7 +132,7 @@ public class MainActivity extends FragmentActivity {
         FragmentTransaction fragmentTransaction = supportFragmentManager.beginTransaction();
 
         // 3、替换
-       fragmentTransaction.replace(R.id.fl_main_content, new ReplaceFragment(getBasePager()));
+        fragmentTransaction.replace(R.id.fl_main_content, new ReplaceFragment(getBasePager()));
 
         // 4、提交事务
         fragmentTransaction.commit();
