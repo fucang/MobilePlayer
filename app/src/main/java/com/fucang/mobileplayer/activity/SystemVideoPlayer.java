@@ -202,21 +202,51 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
      */
     private void setButtonState() {
         if (mediaItems != null && mediaItems.size() > 0) {
-            if (position == 0) {
-                btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray); // 设置为灰色
-                btnVideoPre.setEnabled(false); // 设置不可点击
-            }
-            if (position == mediaItems.size() - 1) {
-                // 设置next按钮为灰
-                btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
-                btnVideoNext.setEnabled(false);
+            if ((position == 0) && (position == mediaItems.size() - 1)) {
+                setPreButton(false);
+                setNextButton(false);
+            } else if ((position > 0) && (position == mediaItems.size() - 1)) {
+                setPreButton(true);
+                setNextButton(false);
+            } else if ((position == 0) && (position < mediaItems.size() - 1)) {
+                setPreButton(false);
+                setNextButton(true);
+            } else {
+                setPreButton(true);
+                setNextButton(true);
             }
         } else if (uri != null) {
             // 两个按钮均为灰色且不可点击
+            setPreButton(false);
+            setNextButton(false);
+        }
+    }
+
+    /**
+     * 设置播放上一个视频按钮
+     * @param isEnabled
+     */
+    private void setPreButton(boolean isEnabled) {
+        if (isEnabled) {
+            btnVideoPre.setBackgroundResource(R.drawable.btn_video_pre_selector);
+            btnVideoPre.setEnabled(true);
+        } else {
             btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray); // 设置为灰色
             btnVideoPre.setEnabled(false); // 设置不可点击
-            btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
-            btnVideoNext.setEnabled(false);
+        }
+    }
+
+    /**
+     * 设置播放下一个视频按钮
+     * @param isEnabled
+     */
+    private void setNextButton(boolean isEnabled) {
+        if (isEnabled) {
+            btnVideoNext.setBackgroundResource(R.drawable.btn_video_next_selector);
+            btnVideoNext.setEnabled(true);
+        } else {
+            btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray); // 设置为灰色
+            btnVideoNext.setEnabled(false); // 设置不可点击
         }
     }
 
