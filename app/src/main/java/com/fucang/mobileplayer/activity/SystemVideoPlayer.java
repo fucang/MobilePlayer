@@ -8,7 +8,6 @@ import android.app.Activity;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.MediaController;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -46,7 +45,8 @@ public class SystemVideoPlayer extends Activity {
         }
 
         // 设置控制面板,即控制视频的播放
-        videoview.setMediaController(new MediaController(this));
+//        videoview.setMediaController(new MediaController(this)); // 系统的控制面板
+
     }
 
     /**

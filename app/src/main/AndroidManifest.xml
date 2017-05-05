@@ -22,10 +22,11 @@
 
         <activity android:name=".activity.MainActivity"
             android:launchMode="singleTask"
-            android:configChanges="keyboardHidden|screenSize|orientation"/>
+            android:configChanges="keyboardHidden|screenSize|orientation" />
 
         <!--键盘隐藏|屏幕大小|横竖屏切换-->
         <activity android:name=".activity.SystemVideoPlayer"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             android:configChanges="keyboardHidden|screenSize|orientation"/>
 
     </application>
