@@ -5,11 +5,16 @@ package com.fucang.mobileplayer.activity;
  */
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -20,7 +25,12 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.fucang.mobileplayer.R;
+import com.fucang.mobileplayer.domain.MediaItem;
 import com.fucang.mobileplayer.utils.Utils;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * 系统播放器
@@ -35,6 +45,21 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
     private Uri uri; // 播放地址
 
     private Utils utils;
+
+    /**
+     * 监听电量的变化
+     */
+    private MyReceiver receiver;
+
+    /**
+     * 传入进来的播放列表
+     */
+    private ArrayList<MediaItem> mediaItems;
+
+    /**
+     * 要播放的视频在列表中的具体位置
+     */
+    private int position;
 
     private LinearLayout llTop;
     private TextView tvName;
@@ -104,8 +129,10 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
             // Handle clicks for btnSwitchPlayer
         } else if ( v == btnExit ) {
             // Handle clicks for btnExit
+            finish();
         } else if ( v == btnVideoPre ) {
             // Handle clicks for btnVideoPre
+            playPreViedo();
         } else if ( v == btnVideoStartPause ) {
             // Handle clicks for btnVideoStartPause
             if (videoview.isPlaying()) { // 视频是否在播放
@@ -124,8 +151,72 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
 
         } else if ( v == btnVideoNext ) {
             // Handle clicks for btnVideoNext
+            playNextVideo();
         } else if ( v == btnVideoSiwchScreen ) {
             // Handle clicks for btnVideoSiwchScreen
+        }
+    }
+
+    /**
+     * 播放上一个视频
+     */
+    private void playPreViedo() {
+        if (mediaItems != null && mediaItems.size() > 0) {
+            // 播放下一个
+            if (position - 1 >= 0) {
+                MediaItem mediaItem = mediaItems.get(--position);
+                tvName.setText(mediaItem.getName());
+                videoview.setVideoPath(mediaItem.getData());
+
+                // 设置按钮状态
+                setButtonState();
+            } else if (uri != null) {
+                // 设置上一个与下一个按钮状态为灰色并且不可以点击
+                setButtonState();
+            }
+        }
+    }
+
+    /**
+     * 播放下一个视频
+     */
+    private void playNextVideo() {
+        if (mediaItems != null && mediaItems.size() > 0) {
+            // 播放下一个
+            if (position + 1 < mediaItems.size()) {
+                MediaItem mediaItem = mediaItems.get(++position);
+                tvName.setText(mediaItem.getName());
+                videoview.setVideoPath(mediaItem.getData());
+
+                // 设置按钮状态
+                setButtonState();
+            } else if (uri != null) {
+                // 设置上一个与下一个按钮状态为灰色并且不可以点击
+                setButtonState();
+            }
+        }
+    }
+
+    /**
+     * 设置按钮状态
+     */
+    private void setButtonState() {
+        if (mediaItems != null && mediaItems.size() > 0) {
+            if (position == 0) {
+                btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray); // 设置为灰色
+                btnVideoPre.setEnabled(false); // 设置不可点击
+            }
+            if (position == mediaItems.size() - 1) {
+                // 设置next按钮为灰
+                btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
+                btnVideoNext.setEnabled(false);
+            }
+        } else if (uri != null) {
+            // 两个按钮均为灰色且不可点击
+            btnVideoPre.setBackgroundResource(R.drawable.btn_pre_gray); // 设置为灰色
+            btnVideoPre.setEnabled(false); // 设置不可点击
+            btnVideoNext.setBackgroundResource(R.drawable.btn_next_gray);
+            btnVideoNext.setEnabled(false);
         }
     }
 
@@ -138,11 +229,15 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
                     // 1、得到当前视频的播放进度
                     int currentPosition = videoview.getCurrentPosition();
 
-                    // 2、设置SeekBar.setProgress（当前进度）
+                    // 2、更新
+                    // 2.1设置SeekBar.setProgress（当前进度）
                     seekbarVideo.setProgress(currentPosition);
 
-                    // 更新文本播放时长
+                    // 2.1更新文本播放进度
                     tvCurrentTime.setText(utils.stringForTime(currentPosition));
+
+                    // 2.3设置系统时间
+                    tvSystemTime.setText(getSystemTime());
 
                     // 3、每秒更新一次
                     handler.removeMessages(PROGRESS);
@@ -152,11 +247,20 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         }
     };
 
+    /**
+     * 得到系统时间
+     * @return
+     */
+    private String getSystemTime() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        return format.format(new Date());
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        utils = new Utils();
+        initData();
 
         findViews();
 
@@ -164,14 +268,85 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         setListener();
 
         // 得到播放地址
-        uri = getIntent().getData();
-        if (uri != null) {
-            videoview.setVideoURI(uri);
-        }
+        getData();
+
+        // 设置播放的uri
+        setData();
 
         // 设置控制面板,即控制视频的播放
 //        videoview.setMediaController(new MediaController(this)); // 系统的控制面板
 
+    }
+
+    /**
+     * 设置播放的地址
+     */
+    private void setData() {
+        if (mediaItems != null && mediaItems.size() > 0) {
+            MediaItem mediaItem = mediaItems.get(position);
+            tvName.setText(mediaItem.getName()); // 设置视频的名称
+            videoview.setVideoPath(mediaItem.getData()); // 设置播放视频的地址
+        } else if (uri != null) {
+            tvName.setText(uri.toString());
+            videoview.setVideoURI(uri);
+        } else {
+            Toast.makeText(SystemVideoPlayer.this, "没有要播放的数据...", Toast.LENGTH_SHORT).show();
+        }
+        setButtonState();
+    }
+
+    /**
+     * 得到视频列表数据
+     */
+    private void getData() {
+        // 得到播放地址
+        uri = getIntent().getData();
+
+        mediaItems = (ArrayList<MediaItem>) getIntent().getSerializableExtra("videolist");
+        position = getIntent().getIntExtra("position", 0);
+    }
+
+    private void initData() {
+        utils = new Utils();
+        // 注册电量广播
+        receiver = new MyReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        // 当电量变化的时候发送广播
+        intentFilter.addAction(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(receiver, intentFilter);
+    }
+
+    /**
+     * 设置电量图片
+     * @param battery
+     */
+    private void setBattery(int battery) {
+        if (battery <= 0) {
+            ivBattery.setImageResource(R.drawable.ic_battery_0);
+        } else if (battery <= 10) {
+            ivBattery.setImageResource(R.drawable.ic_battery_10);
+        } else if(battery <= 20) {
+            ivBattery.setImageResource(R.drawable.ic_battery_20);
+        } else if (battery <= 40) {
+            ivBattery.setImageResource(R.drawable.ic_battery_40);
+        } else if(battery <= 60) {
+            ivBattery.setImageResource(R.drawable.ic_battery_60);
+        } else if(battery <= 80) {
+            ivBattery.setImageResource(R.drawable.ic_battery_80);
+        } else if(battery <= 100) {
+            ivBattery.setImageResource(R.drawable.ic_battery_100);
+        } else {
+            ivBattery.setImageResource(R.drawable.ic_battery_100);
+        }
+    }
+
+    class MyReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            int level = intent.getIntExtra("level", 0); // 0 ~ 100
+            setBattery(level);
+        }
     }
 
     /**
@@ -262,7 +437,37 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
     class MyOnCompletionListener implements MediaPlayer.OnCompletionListener {
         @Override
         public void onCompletion(MediaPlayer mediaPlayer) {
-            Toast.makeText(SystemVideoPlayer.this, "播放完成了..." + uri, Toast.LENGTH_SHORT).show();
+            playNextVideo();
         }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        // 要写在super的前面，释放资源的时候，先释放子类，再释放父类
+        if (receiver != null) {
+            unregisterReceiver(receiver);
+            receiver = null;
+        }
+        super.onDestroy();
     }
 }

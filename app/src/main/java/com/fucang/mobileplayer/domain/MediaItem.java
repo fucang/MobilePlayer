@@ -4,10 +4,12 @@ package com.fucang.mobileplayer.domain;
  * Created by 浮滄 on 2017/5/4.
  */
 
+import java.io.Serializable;
+
 /**
  * 视频和音频的实体类
  */
-public class MediaItem {
+public class MediaItem implements Serializable {
     private String name; // 视频的名称
     private long duration; // 视频的时长
     private long size; // 视频的文件大小
