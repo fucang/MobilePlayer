@@ -160,14 +160,8 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
 
         findViews();
 
-        // 准备好的监听
-        videoview.setOnPreparedListener(new MyOnPreparedListener());
-
-        // 播放出错监听
-        videoview.setOnErrorListener(new MyOnErrorListener());
-
-        // 播放完成的监听
-        videoview.setOnCompletionListener(new MyOnCompletionListener());
+        // 设置监听
+        setListener();
 
         // 得到播放地址
         uri = getIntent().getData();
@@ -178,6 +172,60 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         // 设置控制面板,即控制视频的播放
 //        videoview.setMediaController(new MediaController(this)); // 系统的控制面板
 
+    }
+
+    /**
+     * 设置监听
+     */
+    private void setListener() {
+        // 准备好的监听
+        videoview.setOnPreparedListener(new MyOnPreparedListener());
+
+        // 播放出错监听
+        videoview.setOnErrorListener(new MyOnErrorListener());
+
+        // 播放完成的监听
+        videoview.setOnCompletionListener(new MyOnCompletionListener());
+
+        // 设置SeekBar状态变化的监听
+        seekbarVideo.setOnSeekBarChangeListener(new VideoOnSeekBarChangeListener());
+    }
+
+    /**
+     *
+     */
+    class VideoOnSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
+
+        /**
+         * 当手指滑动的时候，会引起SeekBar进度变化会回调
+         * @param seekBar
+         * @param progress
+         * @param fromUser 如果是用户引起true，不是用户引起false
+         */
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (fromUser) {
+                videoview.seekTo(progress);
+            }
+        }
+
+        /**
+         * 当手指触碰时回调
+         * @param seekBar
+         */
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        /**
+         * 当手指离开的时候回调
+         * @param seekBar
+         */
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
     }
 
     /**
