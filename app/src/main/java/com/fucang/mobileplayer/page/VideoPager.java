@@ -19,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.fucang.mobileplayer.R;
+import com.fucang.mobileplayer.activity.SystemVideoPlayer;
 import com.fucang.mobileplayer.adapter.VideoPagerAdapter;
 import com.fucang.mobileplayer.base.BasePager;
 import com.fucang.mobileplayer.domain.MediaItem;
@@ -85,7 +86,12 @@ public class VideoPager extends BasePager {
             MediaItem mediaItem = mediaItems.get(position);
 
             // 1、调取系统所有播放器
-            Intent intent = new Intent();
+//            Intent intent = new Intent();
+//            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
+//            context.startActivity(intent);
+
+            // 2、调用自己写的播放器播放视频
+            Intent intent = new Intent(context, SystemVideoPlayer.class);
             intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
             context.startActivity(intent);
         }

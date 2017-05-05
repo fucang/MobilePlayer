@@ -19,7 +19,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.MainActivity" android:launchMode="singleTask"/>
+
+        <activity android:name=".activity.MainActivity"
+            android:launchMode="singleTask"
+            android:configChanges="keyboardHidden|screenSize|orientation"/>
+
+        <!--键盘隐藏|屏幕大小|横竖屏切换-->
+        <activity android:name=".activity.SystemVideoPlayer"
+            android:configChanges="keyboardHidden|screenSize|orientation"/>
+
     </application>
 
 </manifest>
