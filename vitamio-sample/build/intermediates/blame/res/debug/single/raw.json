@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "E:\\android\\MobilePlayer\\vitamio-sample\\build\\intermediates\\res\\merged\\debug\\raw\\libarm.so",
+        "source": "E:\\android\\MobilePlayer\\vitamio-sample\\res\\raw\\libarm.so"
+    },
+    {
+        "merged": "E:\\android\\MobilePlayer\\vitamio-sample\\build\\intermediates\\res\\merged\\debug\\raw\\test_cbr.mp3",
+        "source": "E:\\android\\MobilePlayer\\vitamio-sample\\res\\raw\\test_cbr.mp3"
+    }
+]

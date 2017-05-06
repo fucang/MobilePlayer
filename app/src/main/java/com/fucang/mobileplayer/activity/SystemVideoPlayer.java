@@ -837,7 +837,7 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
             Toast.makeText(SystemVideoPlayer.this, "播放出错了...", Toast.LENGTH_SHORT).show();
-            // 1、播放的视频格式不支持——跳转到万能播放器继续播放
+            // 1、播放的视频格式不支持—跳转到万能播放器继续播放
 
 
             // 2、播放网络视频时网络中断
