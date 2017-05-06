@@ -836,9 +836,8 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
     class MyOnErrorListener implements MediaPlayer.OnErrorListener {
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-            Toast.makeText(SystemVideoPlayer.this, "播放出错了...", Toast.LENGTH_SHORT).show();
             // 1、播放的视频格式不支持—跳转到万能播放器继续播放
-
+            startVitamioPlayer();
 
             // 2、播放网络视频时网络中断
             // 如果网络确实断了，可以提示网络断了
@@ -847,6 +846,32 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
 
             return false; // 会弹出对话框
         }
+    }
+
+    /**
+     * 跳转到系统播放器
+     */
+    private void startVitamioPlayer() {
+        if (videoview != null) {
+            videoview.stopPlayback();
+        }
+
+        Toast.makeText(SystemVideoPlayer.this, "跳转到系统播放器", Toast.LENGTH_SHORT).show();
+
+        // 将数据传送到万能播放器
+        Intent intent = new Intent(this, VitamioVideoPlayer.class);
+        if (mediaItems != null && mediaItems.size() > 0) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videolist", mediaItems);
+            intent.putExtras(bundle);
+            intent.putExtra("position", position);
+            startActivity(intent);
+        } else if (uri != null) {
+            intent.setData(uri);
+        }
+
+        // 关闭系统播放器
+        finish();
     }
 
     /**
