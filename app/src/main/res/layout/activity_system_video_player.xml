@@ -14,4 +14,10 @@
     <!--控制面板-->
     <include layout="@layout/media_controller" android:id="@+id/media_controller"/>
 
+    <!--视频卡顿-->
+    <include layout="@layout/ll_buffer" android:id="@+id/ll_buffer"/>
+
+    <!--缓冲页面-->
+    <include layout="@layout/ll_loading" android:id="@+id/ll_loading"/>
+
 </RelativeLayout>

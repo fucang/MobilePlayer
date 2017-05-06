@@ -54,10 +54,9 @@ public class Utils {
      * @param url
      * @return
      */
-    public boolean isNetUrl(String url) {
+    public boolean isNetUri(String url) {
         boolean result = false;
         if (url != null) {
-
             if (url.toLowerCase().startsWith("http")
                     || url.toLowerCase().startsWith("rtsp")
                     || url.toLowerCase().startsWith("mms")) {
@@ -69,11 +68,11 @@ public class Utils {
 
 
     /**
-     * 显示网络速度
+     * 得到网络速度
      * @param context
      * @return
      */
-    public String showNetSpeed(Context context) {
+    public String getNetSpeed(Context context) {
 
         long nowTotalRxBytes = TrafficStats.getUidRxBytes(context.getApplicationInfo().uid) == TrafficStats.UNSUPPORTED ? 0 : (TrafficStats.getTotalRxBytes() / 1024);//转为KB;
         long nowTimeStamp = System.currentTimeMillis();
