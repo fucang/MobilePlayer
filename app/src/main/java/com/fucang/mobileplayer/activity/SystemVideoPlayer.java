@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.DisplayMetrics;
 import android.view.GestureDetector;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
@@ -114,6 +116,26 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
      */
     private int mVideoHeight;
 
+    /**
+     * 调节音量
+     */
+    private AudioManager audioManager;
+
+    /**
+     * 当前音量
+     */
+    private int currentVoice;
+
+    /**
+     * 最大音量
+     */
+    private int maxVoice;
+
+    /**
+     * 是否是静音
+     */
+    private boolean isMute;
+
     private LinearLayout llTop;
     private TextView tvName;
     private ImageView ivBattery;
@@ -167,6 +189,10 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         btnVideoStartPause.setOnClickListener( this );
         btnVideoNext.setOnClickListener( this );
         btnVideoSiwchScreen.setOnClickListener( this );
+
+        // 设置音量
+        seekbarVoice.setMax(maxVoice);
+        seekbarVoice.setProgress(currentVoice);
     }
 
     /**
@@ -179,6 +205,8 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
     public void onClick(View v) {
         if ( v == btnVoice ) {
             // Handle clicks for btnVoice
+            isMute = !isMute;
+            updateVoice(currentVoice, isMute);
         } else if ( v == btnSwitchPlayer ) {
             // Handle clicks for btnSwitchPlayer
         } else if ( v == btnExit ) {
@@ -460,6 +488,11 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         screenWidth = metrics.widthPixels;
         screenHeight = metrics.heightPixels;
 
+        // 得到音量
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        currentVoice = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        maxVoice = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
     } // initData()
 
     /**
@@ -557,10 +590,70 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
 
         // 设置SeekBar状态变化的监听
         seekbarVideo.setOnSeekBarChangeListener(new VideoOnSeekBarChangeListener());
+
+        seekbarVoice.setOnSeekBarChangeListener(new VoiceOnSeekBarChangeListener());
+
     }
 
     /**
-     * SeekBar状态变化的监听
+     * 音量的SeekBar状态变化的监听
+     */
+    class VoiceOnSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
+        /**
+         * 当手指滑动的时候，会引起SeekBar进度变化会回调
+         * @param seekBar
+         * @param progress
+         * @param fromUser 如果是用户引起true，不是用户引起false
+         */
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (fromUser) {
+                if (progress > 0) {
+                    isMute = false;
+                } else {
+                    isMute = true;
+                }
+                updateVoice(progress, isMute);
+            }
+        }
+
+        /**
+         * 当手指触碰时回调
+         * @param seekBar
+         */
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        /**
+         * 当手指离开的时候回调
+         * @param seekBar
+         */
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    }
+
+    /**
+     * 更新音量
+     * @param progress 音量大小
+     * @param isMute 是否是静音
+     */
+    private void updateVoice(int progress, boolean isMute) {
+        if (isMute) {
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+            seekbarVoice.setProgress(0);
+        } else {
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+            seekbarVoice.setProgress(progress);
+            currentVoice = progress;
+        }
+    }
+
+    /**
+     * 播放进度的SeekBar状态变化的监听
      */
     class VideoOnSeekBarChangeListener implements SeekBar.OnSeekBarChangeListener {
 
@@ -644,10 +737,49 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         }
     }
 
+    private float startY;
+
+    /**
+     * 屏幕的高
+     */
+    private float touchRang;
+
+    /**
+     * 当按下的音量
+     */
+    private int mVol;
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         // 将事件传递给手势识别器
         detector.onTouchEvent(event);
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN: // 手指按下
+                // 按下时记录相关的值
+                startY = event.getY();
+                mVol = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+                touchRang = Math.min(screenHeight, screenWidth);
+                handler.removeMessages(HIDE_MEDIACONTROLLER); // 去除隐藏控制面板
+                break;
+            case MotionEvent.ACTION_MOVE: // 手指移动
+                // 移动记录相关值
+                float endY = event.getY();
+                float distanceY = startY - endY;
+                float delta = distanceY / touchRang * maxVoice;
+                int voice = (int) Math.min(Math.max(mVol + delta, 0), maxVoice);
+                if (delta != 0) {
+                    isMute = false;
+                    updateVoice(voice, isMute);
+                }
+                break;
+            case MotionEvent.ACTION_UP: // 手指离开
+                handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 5000);
+                break;
+            default:
+                break;
+        }
+
         return super.onTouchEvent(event);
     }
 
@@ -695,5 +827,23 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
     private void hideMediaController() {
         media_controller.setVisibility(View.GONE);
         isShowMediaController = false;
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN) {
+            currentVoice--;
+            updateVoice(currentVoice, false);
+            handler.removeMessages(HIDE_MEDIACONTROLLER);
+            handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 5000);
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_VOLUME_UP) {
+            currentVoice++;
+            updateVoice(currentVoice, false);
+            handler.removeMessages(HIDE_MEDIACONTROLLER);
+            handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 5000);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
