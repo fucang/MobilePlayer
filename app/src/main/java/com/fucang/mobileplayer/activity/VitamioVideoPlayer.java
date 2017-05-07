@@ -5,8 +5,10 @@ package com.fucang.mobileplayer.activity;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
@@ -40,7 +42,6 @@ import java.util.Date;
 
 import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
-import io.vov.vitamio.widget.VideoView;
 
 /**
  * 系统播放器
@@ -842,16 +843,23 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
             Toast.makeText(VitamioVideoPlayer.this, "播放出错了...", Toast.LENGTH_SHORT).show();
-            // 1、播放的视频格式不支持—跳转到万能播放器继续播放
-
-
-            // 2、播放网络视频时网络中断
-            // 如果网络确实断了，可以提示网络断了
-            // 如果网络断断续续，重新播放
-            // 3、播放的视频中间有空白
-
-            return false; // 会弹出对话框
+            Toast.makeText(VitamioVideoPlayer.this, "====================", Toast.LENGTH_SHORT).show();
+            showErrorDialog();
+            return true; // 会弹出对话框
         }
+    }
+
+    private void showErrorDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("提示");
+        builder.setMessage("抱歉，无法播放该视频！！");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                finish();
+            }
+        });
+        builder.show();
     }
 
     /**

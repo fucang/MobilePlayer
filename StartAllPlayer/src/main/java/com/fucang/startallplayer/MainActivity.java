@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void startAllPlayer(View view) {
         Intent intent = new Intent();
-        intent.setDataAndType(Uri.parse("http://vfx.mtime.cn/Video/2016/11/28/mp4/161128092413441663.mp4"), "video/*");
+        intent.setDataAndType(Uri.parse("http://vfx.mtime.cn/Video/2016/11/28/mp4/161128092413441663sd.rmvb"), "video/*");
         startActivity(intent);
     }
 }

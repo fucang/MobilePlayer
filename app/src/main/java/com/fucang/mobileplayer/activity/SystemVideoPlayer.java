@@ -831,7 +831,7 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
     }
 
     /**
-     * 播放完成的监听
+     * 播放错误的监听
      */
     class MyOnErrorListener implements MediaPlayer.OnErrorListener {
         @Override
@@ -855,9 +855,6 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         if (videoview != null) {
             videoview.stopPlayback();
         }
-
-        Toast.makeText(SystemVideoPlayer.this, "跳转到系统播放器", Toast.LENGTH_SHORT).show();
-
         // 将数据传送到万能播放器
         Intent intent = new Intent(this, VitamioVideoPlayer.class);
         if (mediaItems != null && mediaItems.size() > 0) {
