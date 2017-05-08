@@ -615,8 +615,6 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
         currentVoice = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         maxVoice = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
 
-        Toast.makeText(VitamioVideoPlayer.this, "万能播放器", Toast.LENGTH_SHORT).show();
-
     } // initData()
 
     /**
@@ -883,10 +881,8 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
     class MyOnErrorListener implements MediaPlayer.OnErrorListener {
         @Override
         public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-            Toast.makeText(VitamioVideoPlayer.this, "播放出错了...", Toast.LENGTH_SHORT).show();
-            Toast.makeText(VitamioVideoPlayer.this, "====================", Toast.LENGTH_SHORT).show();
             showErrorDialog();
-            return false; // 不会弹出对话框
+            return true; // 不会弹出对话框
         }
     }
 

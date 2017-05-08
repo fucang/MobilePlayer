@@ -15,6 +15,8 @@ public class MediaItem implements Serializable {
     private long size; // 视频的文件大小
     private String data; // 视频的播放地址
     private String artist; // 艺术家
+    private String imageUrl;
+    private String desc;
 
     public MediaItem() {
     }
@@ -67,6 +69,22 @@ public class MediaItem implements Serializable {
         this.artist = artist;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getDesc() {
+        return desc;
+    }
+
+    public void setDesc(String desc) {
+        this.desc = desc;
+    }
+
     @Override
     public String toString() {
         return "MediaItem{" +
@@ -75,6 +93,8 @@ public class MediaItem implements Serializable {
                 ", size=" + size +
                 ", data='" + data + '\'' +
                 ", artist='" + artist + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", desc='" + desc + '\'' +
                 '}';
     }
 }
