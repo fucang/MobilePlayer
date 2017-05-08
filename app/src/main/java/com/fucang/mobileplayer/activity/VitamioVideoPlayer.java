@@ -65,7 +65,7 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
 
     // 是否使用系统的监听的卡顿
     private static final boolean IS_USE_SYSTEM_SPEED = Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1;
-//    private static final boolean IS_USE_SYSTEM_SPEED = false;
+    //private static final boolean IS_USE_SYSTEM_SPEED = true;
 
     private VitamioVideoView videoview;
 
@@ -208,7 +208,8 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
         btnVideoNext = (Button)findViewById( R.id.btn_video_next );
         btnVideoSiwchScreen = (Button)findViewById( R.id.btn_video_siwch_screen );
 
-        videoview = (VitamioVideoView) findViewById(R.id.vitamiovideoview);
+        videoview = (VitamioVideoView) findViewById(R.id.videoview);
+
         media_controller = (RelativeLayout) findViewById(R.id.media_controller);
         tv_buffer_netspeed = (TextView) findViewById(R.id.tv_buffer_netspeed);
         ll_buffer = (LinearLayout) findViewById(R.id.ll_buffer);
@@ -244,6 +245,7 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
             updateVoice(currentVoice, isMute);
         } else if ( v == btnSwitchPlayer ) {
             // Handle clicks for btnSwitchPlayer
+            showSwichPlayerDialog();
         } else if ( v == btnExit ) {
             // Handle clicks for btnExit
             finish();
@@ -262,6 +264,43 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
         }
         handler.removeMessages(HIDE_MEDIACONTROLLER);
         handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 5000);
+    }
+
+    /**
+     * 手动切换到系统播放器
+     */
+    private void showSwichPlayerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("提示");
+        builder.setMessage("当您播放的视频，有花屏时，请尝试系统播放器");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startSystemPlayer();
+            }
+        });
+        builder.setNegativeButton("取消", null);
+        builder.show();
+    }
+
+    private void startSystemPlayer() {
+        if (videoview != null) {
+            videoview.stopPlayback();
+        }
+        // 将数据传送到系统播放器
+        Intent intent = new Intent(this, SystemVideoPlayer.class);
+        if (mediaItems != null && mediaItems.size() > 0) {
+            Bundle bundle = new Bundle();
+            bundle.putSerializable("videolist", mediaItems);
+            intent.putExtras(bundle);
+            intent.putExtra("position", position);
+        } else if (uri != null) {
+            intent.setData(uri);
+        }
+        startActivity(intent);
+
+        // 关闭系统播放器
+        finish();
     }
 
     private void startAndPause() {
@@ -467,6 +506,7 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
 
         findViews();
 
+
         // 设置监听
         setListener();
 
@@ -506,7 +546,6 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
     private void getData() {
         // 得到播放地址
         uri = getIntent().getData();
-
         mediaItems = (ArrayList<MediaItem>) getIntent().getSerializableExtra("videolist");
         position = getIntent().getIntExtra("position", 0);
     }
@@ -575,6 +614,8 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
         currentVoice = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         maxVoice = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+
+        Toast.makeText(VitamioVideoPlayer.this, "万能播放器", Toast.LENGTH_SHORT).show();
 
     } // initData()
 
@@ -845,7 +886,7 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
             Toast.makeText(VitamioVideoPlayer.this, "播放出错了...", Toast.LENGTH_SHORT).show();
             Toast.makeText(VitamioVideoPlayer.this, "====================", Toast.LENGTH_SHORT).show();
             showErrorDialog();
-            return true; // 会弹出对话框
+            return false; // 不会弹出对话框
         }
     }
 

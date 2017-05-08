@@ -5,8 +5,10 @@ package com.fucang.mobileplayer.activity;
  */
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
@@ -238,6 +240,7 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
             updateVoice(currentVoice, isMute);
         } else if ( v == btnSwitchPlayer ) {
             // Handle clicks for btnSwitchPlayer
+            showSwichPlayerDialog();
         } else if ( v == btnExit ) {
             // Handle clicks for btnExit
             finish();
@@ -256,6 +259,23 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
         }
         handler.removeMessages(HIDE_MEDIACONTROLLER);
         handler.sendEmptyMessageDelayed(HIDE_MEDIACONTROLLER, 5000);
+    }
+
+    /**
+     * 手动切换到万能播放器
+     */
+    private void showSwichPlayerDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("提示");
+        builder.setMessage("当您播放的视频，有声音没有画面的时候，请切换到万能播放器");
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                startVitamioPlayer();
+            }
+        });
+        builder.setNegativeButton("取消", null);
+        builder.show();
     }
 
     private void startAndPause() {
@@ -844,7 +864,7 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
             // 如果网络断断续续，重新播放
             // 3、播放的视频中间有空白
 
-            return false; // 会弹出对话框
+            return true; // 不让弹出对话框，调到万能播放器
         }
     }
 
@@ -862,10 +882,10 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
             bundle.putSerializable("videolist", mediaItems);
             intent.putExtras(bundle);
             intent.putExtra("position", position);
-            startActivity(intent);
         } else if (uri != null) {
             intent.setData(uri);
         }
+        startActivity(intent);
 
         // 关闭系统播放器
         finish();

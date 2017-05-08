@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
+
 /**
  * Created by 浮滄 on 2017/5/5.
  */
@@ -11,7 +12,7 @@ import android.view.ViewGroup;
 /**
  * 自定义VitamioVideoView
  */
-public class VitamioVideoView extends io.vov.vitamio.widget.VideoView {
+public class VitamioVideoView extends io.vov.vitamio.widget.VideoView{
 
     /**
      * 在代码中创建的时候调用

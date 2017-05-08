@@ -39,7 +39,7 @@
             android:configChanges="keyboardHidden|screenSize|orientation"
             android:screenOrientation="landscape"
             android:label="@string/player_name"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
+            android:theme="@style/noAnimation_Theme">
 
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
@@ -76,7 +76,7 @@
         <activity android:name=".activity.VitamioVideoPlayer"
             android:configChanges="keyboardHidden|screenSize|orientation"
             android:screenOrientation="landscape"
-            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+            android:theme="@style/noAnimation_Theme"/>
     </application>
 
 </manifest>
