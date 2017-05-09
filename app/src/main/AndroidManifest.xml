@@ -80,6 +80,12 @@
             android:theme="@style/noAnimation_Theme"/>
 
         <activity android:name=".activity.AudioPlayer"/>
+
+        <service android:name=".service.MusicPlayerService">
+            <intent-filter>
+                <action android:name="com.fucang.mobileplayer_OPEN_AUDIO"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

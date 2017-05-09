@@ -30,6 +30,7 @@
     </RelativeLayout>
 
     <LinearLayout
+        android:layout_centerVertical="true"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/rl_image"
         android:layout_width="match_parent"
@@ -40,7 +41,6 @@
             android:id="@+id/tv_name"
             android:text="视频名称"
             android:textSize="16sp"
-            android:layout_centerVertical="true"
             android:textColor="@android:color/black"
             android:maxLines="1"
             android:layout_width="wrap_content"
