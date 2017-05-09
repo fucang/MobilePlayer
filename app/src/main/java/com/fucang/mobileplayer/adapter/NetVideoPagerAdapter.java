@@ -48,7 +48,7 @@ public class NetVideoPagerAdapter extends BaseAdapter {
     public View getView(int position, View view, ViewGroup viewGroup) {
         ViewHoder viewHoder;
         if (view == null) {
-            view = View.inflate(context, R.layout.item_netvideo_pager, null);
+            view = View.inflate(context, R.layout.item_net_video_pager, null);
             viewHoder = new ViewHoder();
             viewHoder.iv_icon = (ImageView) view.findViewById(R.id.iv_icon);
             viewHoder.tv_name = (TextView) view.findViewById(R.id.tv_name);

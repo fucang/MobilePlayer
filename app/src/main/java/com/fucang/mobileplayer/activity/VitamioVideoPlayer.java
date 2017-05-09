@@ -334,6 +334,7 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
                 ll_loading.setVisibility(View.VISIBLE);
 
                 // 设置按钮状态
+                btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_pause_selector);
                 setButtonState();
             } else if (uri != null) {
                 // 设置上一个与下一个按钮状态为灰色并且不可以点击
@@ -356,6 +357,7 @@ public class VitamioVideoPlayer extends Activity implements View.OnClickListener
 
                 ll_loading.setVisibility(View.VISIBLE);
                 // 设置按钮状态
+                btnVideoStartPause.setBackgroundResource(R.drawable.btn_video_pause_selector);
                 setButtonState();
             } else if (uri != null) {
                 // 设置上一个与下一个按钮状态为灰色并且不可以点击

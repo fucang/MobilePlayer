@@ -13,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.activity.SystemVideoPlayer;
 import com.fucang.mobileplayer.adapter.NetVideoPagerAdapter;
@@ -257,13 +256,12 @@ public class NetVideoPager extends BasePager {
                         String hightUrl = jsonObjectItem.optString("hightUrl");
                         mediaItem.setData(hightUrl);
 
-                        mediaItems.add(mediaItem);
+                        mediaItemList.add(mediaItem);
                     }
                 }
             }
         } catch (JSONException e) {
             Logger.error("读取网络视频错误");
-            throw new RuntimeException(e);
         }
 
         return mediaItemList;

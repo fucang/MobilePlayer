@@ -26,10 +26,14 @@ public class VideoPagerAdapter extends BaseAdapter {
 
     private Utils utils; // 转换
 
-    public VideoPagerAdapter(Context context, ArrayList<MediaItem> mediaItems) {
+    // 判断是视频还是音频
+    private final boolean isVideo;
+
+    public VideoPagerAdapter(Context context, ArrayList<MediaItem> mediaItems, boolean isVideo) {
         this.context = context;
         this.mediaItems = mediaItems;
         this.utils = new Utils();
+        this.isVideo = isVideo;
     }
 
     @Override
@@ -67,6 +71,11 @@ public class VideoPagerAdapter extends BaseAdapter {
         viewHoder.tv_name.setText(mediaItem.getName());
         viewHoder.tv_size.setText(Formatter.formatFileSize(context, mediaItem.getSize()));
         viewHoder.tv_time.setText(utils.stringForTime((int) mediaItem.getDuration()));
+
+        if (!isVideo) {
+            // 音频
+            viewHoder.iv_icon.setImageResource(R.drawable.music_default_bg);
+        }
         return view;
     }
 
