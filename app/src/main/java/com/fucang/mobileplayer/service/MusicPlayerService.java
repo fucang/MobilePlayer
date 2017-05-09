@@ -93,6 +93,11 @@ public class MusicPlayerService extends Service {
         public int getPlayMode() throws RemoteException {
             return service.getPlayMode();
         }
+
+        @Override
+        public boolean isPlaying() throws RemoteException {
+            return service.isPlaying();
+        }
     };
 
     private ArrayList<Object> mediaItems;
@@ -281,6 +286,10 @@ public class MusicPlayerService extends Service {
      */
     private int getPlayMode() {
         return 0;
+    }
+
+    private boolean isPlaying() {
+        return mediaPlayer.isPlaying();
     }
 
     class MyOnPreparedListener implements MediaPlayer.OnPreparedListener {
