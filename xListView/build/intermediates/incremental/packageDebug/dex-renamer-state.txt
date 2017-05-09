@@ -1,7 +1,0 @@
-#Tue May 09 09:36:01 CST 2017
-base.0=E\:\\android\\MobilePlayer\\xListView\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_0c058a6af253147ce56c26980e3e7e8d3531c280
-renamed.1=classes.dex
-renamed.0=classes2.dex
-file.1=E\:\\android\\MobilePlayer\\xListView\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_fbb021cf1a070c67e5e22c5fc469204f811aac83\\classes.dex
-base.1=E\:\\android\\MobilePlayer\\xListView\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run_fbb021cf1a070c67e5e22c5fc469204f811aac83
-file.0=E\:\\android\\MobilePlayer\\xListView\\build\\intermediates\\transforms\\dex\\debug\\folders\\1000\\10\\instant-run-bootstrap_0c058a6af253147ce56c26980e3e7e8d3531c280\\classes.dex

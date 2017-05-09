@@ -7,16 +7,19 @@ package com.fucang.mobileplayer.page;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.activity.SystemVideoPlayer;
 import com.fucang.mobileplayer.adapter.NetVideoPagerAdapter;
 import com.fucang.mobileplayer.base.BasePager;
 import com.fucang.mobileplayer.domain.MediaItem;
+import com.fucang.mobileplayer.utils.CacheUtils;
 import com.fucang.mobileplayer.utils.Constants;
 import com.fucang.mobileplayer.utils.Logger;
 import com.fucang.mobileplayer.utils.Utils;
@@ -105,9 +108,10 @@ public class NetVideoPager extends BasePager {
             public void onError(Throwable ex, boolean isOnCallback) {
                 Logger.info("联网失败==" + ex.getMessage());
                 // 显示联网失败
-                mListview.setVisibility(View.GONE);
-                mProgressBar.setVisibility(View.GONE);
-                mTv_nonet.setVisibility(View.VISIBLE);
+//                mListview.setVisibility(View.GONE);
+//                mProgressBar.setVisibility(View.GONE);
+//                mTv_nonet.setVisibility(View.VISIBLE);
+                showData();
 
                 isLoadMore = false;
             }
@@ -131,7 +135,10 @@ public class NetVideoPager extends BasePager {
         Logger.info("==========================初始化网络视频");
         super.initData();
         utils = new Utils();
-
+        String saveJson = CacheUtils.getString(context, Constants.NET_URL);
+        if (TextUtils.isEmpty(saveJson)) {
+            processData(saveJson);
+        }
         getDataFromNet(); // 联网获取数据
     }
 
@@ -145,6 +152,8 @@ public class NetVideoPager extends BasePager {
             @Override
             public void onSuccess(String result) {
                 Logger.info("联网成功==");
+                // 缓存数据
+                CacheUtils.putString(context, Constants.NET_URL, result);
                 // 解析数据
                 processData(result);
             }
@@ -153,9 +162,10 @@ public class NetVideoPager extends BasePager {
             public void onError(Throwable ex, boolean isOnCallback) {
                 Logger.info("联网失败==" + ex.getMessage());
                 // 显示联网失败
-                mListview.setVisibility(View.GONE);
-                mProgressBar.setVisibility(View.GONE);
-                mTv_nonet.setVisibility(View.VISIBLE);
+//                mListview.setVisibility(View.GONE);
+//                mProgressBar.setVisibility(View.GONE);
+//                mTv_nonet.setVisibility(View.VISIBLE);
+                showData();
             }
 
             @Override
@@ -183,23 +193,7 @@ public class NetVideoPager extends BasePager {
     private void processData(String json) {
         if (!isLoadMore) {
             mediaItems = parseJson(json);
-
-            // 设置适配器
-            if (mediaItems != null && mediaItems.size() > 0) {
-                // 有数据
-                // 设置适配器
-                adapter = new NetVideoPagerAdapter(context, mediaItems);
-                mListview.setAdapter(adapter);
-                onLoad();
-
-                // 隐藏文本
-                mTv_nonet.setVisibility(View.GONE);
-            } else {
-                // 没有数据,显示没有数据的文本
-                mTv_nonet.setVisibility(View.VISIBLE);
-            }
-            // 隐藏ProgressBar(转动圈)
-            mProgressBar.setVisibility(View.GONE);
+            showData();
         } else {
             // 加载更多:要把得到更多的数据添加到原来的集合mediaItems中
             mediaItems.addAll(parseJson(json));
@@ -211,6 +205,25 @@ public class NetVideoPager extends BasePager {
             onLoad();
         }
 
+    }
+
+    private void showData() {
+        // 设置适配器
+        if (mediaItems != null && mediaItems.size() > 0) {
+            // 有数据
+            // 设置适配器
+            adapter = new NetVideoPagerAdapter(context, mediaItems);
+            mListview.setAdapter(adapter);
+            onLoad();
+
+            // 隐藏文本
+            mTv_nonet.setVisibility(View.GONE);
+        } else {
+            // 没有数据,显示没有数据的文本
+            mTv_nonet.setVisibility(View.VISIBLE);
+        }
+        // 隐藏ProgressBar(转动圈)
+        mProgressBar.setVisibility(View.GONE);
     }
 
     /**

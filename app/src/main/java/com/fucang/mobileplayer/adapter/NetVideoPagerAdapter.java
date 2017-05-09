@@ -1,18 +1,16 @@
 package com.fucang.mobileplayer.adapter;
 
 import android.content.Context;
-import android.text.format.Formatter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.domain.MediaItem;
-import com.fucang.mobileplayer.utils.Utils;
-
-import org.xutils.x;
 
 import java.util.ArrayList;
 
@@ -64,7 +62,17 @@ public class NetVideoPagerAdapter extends BaseAdapter {
         MediaItem mediaItem = mediaItems.get(position);
         viewHoder.tv_name.setText(mediaItem.getName());
         viewHoder.tv_desc.setText(mediaItem.getDesc());
-        x.image().bind(viewHoder.iv_icon, mediaItem.getImageUrl());
+
+        // 使用xUtil3请求图片
+//        x.image().bind(viewHoder.iv_icon, mediaItem.getImageUrl());
+
+        // 使用Glide请求图片
+        Glide.with(context)
+                .load(mediaItem.getImageUrl())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.video_default_icon)
+                .error(R.drawable.video_default_icon)
+                .into(viewHoder.iv_icon);
 
         return view;
     }
