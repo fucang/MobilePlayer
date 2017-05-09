@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -20,6 +19,8 @@ import com.fucang.mobileplayer.base.BasePager;
 import com.fucang.mobileplayer.domain.MediaItem;
 import com.fucang.mobileplayer.utils.Constants;
 import com.fucang.mobileplayer.utils.Logger;
+import com.fucang.mobileplayer.utils.Utils;
+import com.fucang.mobileplayer.view.XListView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,7 +39,7 @@ public class NetVideoPager extends BasePager {
 
     // 有x.view().inject(this, view);才可使用注解
     @ViewInject(R.id.listview)
-    private ListView mListview;
+    private XListView mListview;
 
     @ViewInject(R.id.tv_nonet)
     private TextView mTv_nonet;
@@ -50,6 +51,11 @@ public class NetVideoPager extends BasePager {
     private ArrayList<MediaItem> mediaItems;
 
     private NetVideoPagerAdapter adapter;
+
+    // 是否加载更多了
+    private boolean isLoadMore = false;
+
+    private Utils utils;
 
     public NetVideoPager(Context context) {
         super(context);
@@ -64,15 +70,75 @@ public class NetVideoPager extends BasePager {
         View view = View.inflate(context, R.layout.netvideo_pager, null);
         x.view().inject(this, view);
         mListview.setOnItemClickListener(new MyOnItemClickListener());
+        mListview.setPullLoadEnable(true);
+        mListview.setXListViewListener(new MyIXListViewListener());
 
         return view;
+    }
+
+    class MyIXListViewListener implements XListView.IXListViewListener {
+
+        @Override
+        public void onRefresh() {
+            getDataFromNet();
+        }
+
+        @Override
+        public void onLoadMore() {
+            getMoreDataFromNet();
+        }
+    }
+
+    private void getMoreDataFromNet() {
+        // 联网
+        RequestParams params = new RequestParams(Constants.NET_URL);
+        x.http().get(params, new Callback.CommonCallback<String>() {
+            @Override
+            public void onSuccess(String result) {
+                Logger.info("联网成功==");
+                // 解析数据
+                processData(result);
+                isLoadMore = true;
+            }
+
+            @Override
+            public void onError(Throwable ex, boolean isOnCallback) {
+                Logger.info("联网失败==" + ex.getMessage());
+                // 显示联网失败
+                mListview.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+                mTv_nonet.setVisibility(View.VISIBLE);
+
+                isLoadMore = false;
+            }
+
+            @Override
+            public void onCancelled(CancelledException cex) {
+                Logger.info("onCancelled==" + cex.getMessage());
+                isLoadMore = false;
+            }
+
+            @Override
+            public void onFinished() {
+                Logger.info("onFinished==");
+                isLoadMore = false;
+            }
+        });
     }
 
     @Override
     public void initData() {
         Logger.info("==========================初始化网络视频");
         super.initData();
+        utils = new Utils();
 
+        getDataFromNet(); // 联网获取数据
+    }
+
+    /**
+     * 联网获取数据
+     */
+    private void getDataFromNet() {
         // 联网
         RequestParams params = new RequestParams(Constants.NET_URL);
         x.http().get(params, new Callback.CommonCallback<String>() {
@@ -104,28 +170,47 @@ public class NetVideoPager extends BasePager {
         });
     }
 
+    private void onLoad() {
+        mListview.stopRefresh();
+        mListview.stopLoadMore();
+        mListview.setRefreshTime("更新时间" + utils.getSystemTime());
+    }
+
     /**
      * 解析数据
      * @param json
      */
     private void processData(String json) {
-        mediaItems = parseJson(json);
+        if (!isLoadMore) {
+            mediaItems = parseJson(json);
 
-        // 设置适配器
-        if (mediaItems != null && mediaItems.size() > 0) {
-            // 有数据
             // 设置适配器
-            adapter = new NetVideoPagerAdapter(context, mediaItems);
-            mListview.setAdapter(adapter);
+            if (mediaItems != null && mediaItems.size() > 0) {
+                // 有数据
+                // 设置适配器
+                adapter = new NetVideoPagerAdapter(context, mediaItems);
+                mListview.setAdapter(adapter);
+                onLoad();
 
-            // 隐藏文本
-            mTv_nonet.setVisibility(View.GONE);
+                // 隐藏文本
+                mTv_nonet.setVisibility(View.GONE);
+            } else {
+                // 没有数据,显示没有数据的文本
+                mTv_nonet.setVisibility(View.VISIBLE);
+            }
+            // 隐藏ProgressBar(转动圈)
+            mProgressBar.setVisibility(View.GONE);
         } else {
-            // 没有数据,显示没有数据的文本
-            mTv_nonet.setVisibility(View.VISIBLE);
+            // 加载更多:要把得到更多的数据添加到原来的集合mediaItems中
+            mediaItems.addAll(parseJson(json));
+            // 刷新适配器
+            adapter.notifyDataSetChanged();
+
+            isLoadMore = false;
+
+            onLoad();
         }
-        // 隐藏ProgressBar(转动圈)
-        mProgressBar.setVisibility(View.GONE);
+
     }
 
     /**
@@ -177,22 +262,12 @@ public class NetVideoPager extends BasePager {
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
             MediaItem mediaItem = mediaItems.get(position);
 
-            // 1、调取系统所有播放器
-//            Intent intent = new Intent();
-//            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
-//            context.startActivity(intent);
-
-            // 2、调用自己写的播放器播放视频——一个播放地址
-//            Intent intent = new Intent(context, SystemVideoPlayer.class);
-//            intent.setDataAndType(Uri.parse(mediaItem.getData()), "video/*");
-//            context.startActivity(intent);
-
-            // 3、传递列表数据，需要序列化
+            // 传递列表数据，需要序列化
             Intent intent = new Intent(context, SystemVideoPlayer.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable("videolist", mediaItems);
             intent.putExtras(bundle);
-            intent.putExtra("position", position);
+            intent.putExtra("position", position - 1);
             context.startActivity(intent);
         }
     }

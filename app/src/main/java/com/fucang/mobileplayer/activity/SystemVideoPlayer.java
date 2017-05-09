@@ -414,7 +414,7 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
                     tvCurrentTime.setText(utils.stringForTime(currentPosition));
 
                     // 2.3设置系统时间
-                    tvSystemTime.setText(getSystemTime());
+                    tvSystemTime.setText(utils.getSystemTime());
 
                     // 2.4缓冲进度的更新
                     if (isNetUri) {
@@ -463,15 +463,6 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
             }
         }
     };
-
-    /**
-     * 得到系统时间
-     * @return
-     */
-    private String getSystemTime() {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
-        return format.format(new Date());
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
