@@ -7,6 +7,8 @@ package com.fucang.mobileplayer.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.fucang.mobileplayer.service.MusicPlayerService;
+
 /**
  * 缓存数据
  */
@@ -32,5 +34,26 @@ public class CacheUtils {
     public static String getString(Context context, String key) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("fucang", Context.MODE_PRIVATE);
         return sharedPreferences.getString(key, "");
+    }
+
+    /**
+     * 保存播放模式
+     * @param context
+     * @param key
+     * @param value
+     */
+    public static void putPlaymode(Context context, String key, int value) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("fucang", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putInt(key, value).commit();
+    }
+
+    /**
+     * 获取播放模式
+     * @param context
+     * @param key
+     */
+    public static int getPlaymode(Context context, String key) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("fucang", Context.MODE_PRIVATE);
+        return sharedPreferences.getInt(key, MusicPlayerService.REPEAT_NORMAL);
     }
 }

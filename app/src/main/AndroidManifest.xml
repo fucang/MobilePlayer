@@ -79,7 +79,9 @@
             android:screenOrientation="landscape"
             android:theme="@style/noAnimation_Theme"/>
 
-        <activity android:name=".activity.AudioPlayer"/>
+        <activity android:name=".activity.AudioPlayer"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"/>
 
         <service android:name=".service.MusicPlayerService">
             <intent-filter>

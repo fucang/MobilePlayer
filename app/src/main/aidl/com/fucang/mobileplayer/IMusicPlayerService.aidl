@@ -89,5 +89,10 @@ interface IMusicPlayerService {
           * @return
           */
          boolean isPlaying();
+
+         /**
+         * 音频拖动
+         */
+         void seekTo(int position);
 }
 
