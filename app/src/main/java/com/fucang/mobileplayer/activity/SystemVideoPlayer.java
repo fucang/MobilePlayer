@@ -969,6 +969,9 @@ public class SystemVideoPlayer extends Activity implements View.OnClickListener 
 
     @Override
     protected void onDestroy() {
+        //移除所有消息
+        handler.removeCallbacksAndMessages(null);
+
         // 要写在super的前面，释放资源的时候，先释放子类，再释放父类
         if (receiver != null) {
             unregisterReceiver(receiver);

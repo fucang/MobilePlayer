@@ -86,6 +86,10 @@ public class NetVideoPager extends BasePager {
             @Override
             public void onError(Throwable ex, boolean isOnCallback) {
                 Logger.info("联网失败==" + ex.getMessage());
+                // 显示联网失败
+                mListview.setVisibility(View.GONE);
+                mProgressBar.setVisibility(View.GONE);
+                mTv_nonet.setVisibility(View.VISIBLE);
             }
 
             @Override
