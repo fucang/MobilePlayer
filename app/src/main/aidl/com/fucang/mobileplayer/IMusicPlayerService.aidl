@@ -94,5 +94,10 @@ interface IMusicPlayerService {
          * 音频拖动
          */
          void seekTo(int position);
+
+         /**
+          * 频谱闪动
+          */
+         int getAudioSessionId();
 }
 

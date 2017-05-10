@@ -135,6 +135,11 @@ public class MusicPlayerService extends Service {
         public void seekTo(int position) throws RemoteException {
             mediaPlayer.seekTo(position);
         }
+
+        @Override
+        public int getAudioSessionId() throws RemoteException {
+            return mediaPlayer.getAudioSessionId();
+        }
     };
 
     @Nullable

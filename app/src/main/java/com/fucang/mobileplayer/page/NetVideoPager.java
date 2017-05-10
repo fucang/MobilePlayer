@@ -93,7 +93,7 @@ public class NetVideoPager extends BasePager {
 
     private void getMoreDataFromNet() {
         // 联网
-        RequestParams params = new RequestParams(Constants.NET_URL);
+        RequestParams params = new RequestParams(Constants.NET_VIDEO_URL);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
@@ -134,7 +134,7 @@ public class NetVideoPager extends BasePager {
         Logger.info("==========================初始化网络视频");
         super.initData();
         utils = new Utils();
-        String saveJson = CacheUtils.getString(context, Constants.NET_URL);
+        String saveJson = CacheUtils.getString(context, Constants.NET_VIDEO_URL);
         if (TextUtils.isEmpty(saveJson)) {
             processData(saveJson);
         }
@@ -146,13 +146,13 @@ public class NetVideoPager extends BasePager {
      */
     private void getDataFromNet() {
         // 联网
-        RequestParams params = new RequestParams(Constants.NET_URL);
+        RequestParams params = new RequestParams(Constants.NET_VIDEO_URL);
         x.http().get(params, new Callback.CommonCallback<String>() {
             @Override
             public void onSuccess(String result) {
                 Logger.info("联网成功==");
                 // 缓存数据
-                CacheUtils.putString(context, Constants.NET_URL, result);
+                CacheUtils.putString(context, Constants.NET_VIDEO_URL, result);
                 // 解析数据
                 processData(result);
             }

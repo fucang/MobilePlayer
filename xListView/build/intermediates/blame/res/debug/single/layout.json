@@ -1,11 +1,11 @@
 [
     {
-        "merged": "E:\\android\\MobilePlayer\\xListView\\build\\intermediates\\res\\merged\\debug\\layout\\xlistview_header.xml",
-        "source": "E:\\android\\MobilePlayer\\xListView\\src\\main\\res\\layout\\xlistview_header.xml"
-    },
-    {
         "merged": "E:\\android\\MobilePlayer\\xListView\\build\\intermediates\\res\\merged\\debug\\layout\\list_item.xml",
         "source": "E:\\android\\MobilePlayer\\xListView\\src\\main\\res\\layout\\list_item.xml"
+    },
+    {
+        "merged": "E:\\android\\MobilePlayer\\xListView\\build\\intermediates\\res\\merged\\debug\\layout\\xlistview_header.xml",
+        "source": "E:\\android\\MobilePlayer\\xListView\\src\\main\\res\\layout\\xlistview_header.xml"
     },
     {
         "merged": "E:\\android\\MobilePlayer\\xListView\\build\\intermediates\\res\\merged\\debug\\layout\\xlistview_footer.xml",

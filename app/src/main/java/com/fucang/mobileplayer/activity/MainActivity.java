@@ -5,17 +5,14 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
-
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.KeyEvent;
 import android.widget.FrameLayout;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 
 import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.base.BasePager;
@@ -137,5 +134,24 @@ public class MainActivity extends FragmentActivity {
         // 4、提交事务
         fragmentTransaction.commit();
 
+    }
+
+    // 用于实现两次退出,表示是否已经退出
+    private boolean isExit = false;
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK && !isExit) {
+            isExit = true;
+            Toast.makeText(MainActivity.this, "再按一次退出浮滄影音", Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isExit = false;
+                }
+            }, 2000);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }

@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.drawable.AnimationDrawable;
+import android.media.audiofx.Visualizer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,6 +27,7 @@ import com.fucang.mobileplayer.service.MusicPlayerService;
 import com.fucang.mobileplayer.utils.Logger;
 import com.fucang.mobileplayer.utils.LyricUtils;
 import com.fucang.mobileplayer.utils.Utils;
+import com.fucang.mobileplayer.view.BaseVisualizerView;
 import com.fucang.mobileplayer.view.ShowLyricView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,7 +57,7 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
 
     private IMusicPlayerService service;
 
-    private ImageView ivIcon;
+    //    private ImageView imageView;
     private TextView ivArtist;
     private TextView ivName;
     private TextView tvTime;
@@ -68,6 +70,8 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
 
     private ShowLyricView showLyricView;
 
+    private BaseVisualizerView baseVisualizerView;
+
     /**
      * Find the Views in the layout<br />
      * <br />
@@ -77,28 +81,29 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
     private void findViews() {
 
         setContentView(R.layout.activity_audio_player);
-        ivIcon = (ImageView) findViewById(R.id.iv_icon);
-        ivIcon.setBackgroundResource(R.drawable.animation_list);
-        AnimationDrawable rocketAnimation = (AnimationDrawable) ivIcon.getBackground();
-        rocketAnimation.start();
+//        ivIcon = (ImageView) findViewById(R.id.iv_icon);
+//        ivIcon.setBackgroundResource(R.drawable.animation_list);
+//        AnimationDrawable rocketAnimation = (AnimationDrawable) ivIcon.getBackground();
+//        rocketAnimation.start();
 
-        ivArtist = (TextView)findViewById( R.id.iv_artist );
-        ivName = (TextView)findViewById( R.id.iv_name );
-        tvTime = (TextView)findViewById( R.id.tv_time );
-        seekbarAudio = (SeekBar)findViewById( R.id.seekbar_audio );
-        btnAudioPlaymode = (Button)findViewById( R.id.btn_audio_playmode );
-        btnAudioPre = (Button)findViewById( R.id.btn_audio_pre );
-        btnAudioStartPause = (Button)findViewById( R.id.btn_audio_start_pause );
-        btnAudioNext = (Button)findViewById( R.id.btn_audio_next );
-        btnLyrc = (Button)findViewById( R.id.btn_lyrc );
+        ivArtist = (TextView) findViewById(R.id.iv_artist);
+        ivName = (TextView) findViewById(R.id.iv_name);
+        tvTime = (TextView) findViewById(R.id.tv_time);
+        seekbarAudio = (SeekBar) findViewById(R.id.seekbar_audio);
+        btnAudioPlaymode = (Button) findViewById(R.id.btn_audio_playmode);
+        btnAudioPre = (Button) findViewById(R.id.btn_audio_pre);
+        btnAudioStartPause = (Button) findViewById(R.id.btn_audio_start_pause);
+        btnAudioNext = (Button) findViewById(R.id.btn_audio_next);
+        btnLyrc = (Button) findViewById(R.id.btn_lyrc);
 
         showLyricView = (ShowLyricView) findViewById(R.id.showLyricView);
+        baseVisualizerView = (BaseVisualizerView) findViewById(R.id.baseVisualizerView);
 
-        btnAudioPlaymode.setOnClickListener( this );
-        btnAudioPre.setOnClickListener( this );
-        btnAudioStartPause.setOnClickListener( this );
-        btnAudioNext.setOnClickListener( this );
-        btnLyrc.setOnClickListener( this );
+        btnAudioPlaymode.setOnClickListener(this);
+        btnAudioPre.setOnClickListener(this);
+        btnAudioStartPause.setOnClickListener(this);
+        btnAudioNext.setOnClickListener(this);
+        btnLyrc.setOnClickListener(this);
 
 
         // 设置视频拖动
@@ -113,10 +118,10 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
      */
     @Override
     public void onClick(View v) {
-        if ( v == btnAudioPlaymode ) {
+        if (v == btnAudioPlaymode) {
             // Handle clicks for btnAudioPlaymode
             setPlayMode();
-        } else if ( v == btnAudioPre ) {
+        } else if (v == btnAudioPre) {
             // Handle clicks for btnAudioPre
             if (service != null) {
                 try {
@@ -125,7 +130,7 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
                     Logger.error("播放上一个音频出错：" + e.getMessage());
                 }
             }
-        } else if ( v == btnAudioStartPause ) {
+        } else if (v == btnAudioStartPause) {
             // Handle clicks for btnAudioStartPause
             if (service != null) {
                 try {
@@ -144,7 +149,7 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
                     Logger.error("获取音乐的播放状态错误：" + e.getMessage());
                 }
             }
-        } else if ( v == btnAudioNext ) {
+        } else if (v == btnAudioNext) {
             // Handle clicks for btnAudioNext
             if (service != null) {
                 try {
@@ -153,7 +158,7 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
                     Logger.error("播放下一个音频出错：" + e.getMessage());
                 }
             }
-        } else if ( v == btnLyrc ) {
+        } else if (v == btnLyrc) {
             // Handle clicks for btnLyrc
         }
     }
@@ -202,6 +207,13 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
                 if (isToast) {
                     Toast.makeText(AudioPlayer.this, "顺序播放", Toast.LENGTH_SHORT).show();
                 }
+            }
+
+            // 校验播放和暂停
+            if (service.isPlaying()) {
+                btnAudioStartPause.setBackgroundResource(R.drawable.btn_audio_start_selector);
+            } else {
+                btnAudioStartPause.setBackgroundResource(R.drawable.btn_audio_pause_selector);
             }
         } catch (RemoteException e) {
             Logger.error("设置播放模式图片错误：" + e.getMessage());
@@ -266,7 +278,7 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
                         showViewData();
                     }
                 } catch (RemoteException e) {
-                    Logger.error("服务播放歌曲错误："  + e.getMessage());
+                    Logger.error("服务播放歌曲错误：" + e.getMessage());
                 }
             }
         }
@@ -282,7 +294,7 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
                     service.stop();
                     service = null;
                 } catch (RemoteException e) {
-                    Logger.error("断开服务错误："  + e.getMessage());
+                    Logger.error("断开服务错误：" + e.getMessage());
                 }
             }
         }
@@ -366,6 +378,27 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
 
         showViewData();
         showPlaymode(false);
+
+        setupVisualizerFxAndUi();
+    }
+
+    private Visualizer mVisualizer;
+
+    /**
+     * 生成一个VisualizerView对象，使音频频谱的波段能够反映到 VisualizerView上
+     */
+    private void setupVisualizerFxAndUi() {
+        try {
+            int audioSessionid = service.getAudioSessionId();
+            mVisualizer = new Visualizer(audioSessionid);
+            // 参数内必须是2的位数
+            mVisualizer.setCaptureSize(Visualizer.getCaptureSizeRange()[1]);
+            // 设置允许波形表示，并且捕获它
+            baseVisualizerView.setVisualizer(mVisualizer);
+            mVisualizer.setEnabled(true);
+        } catch (RemoteException e) {
+            Logger.error("频谱闪动错误：" + e.getMessage());
+        }
     }
 
     private void showLyric() {
@@ -426,6 +459,14 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
 
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mVisualizer != null) {
+            mVisualizer.release();
         }
     }
 }

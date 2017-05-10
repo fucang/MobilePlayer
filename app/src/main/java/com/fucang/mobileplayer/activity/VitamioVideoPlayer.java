@@ -44,7 +44,7 @@ import io.vov.vitamio.MediaPlayer;
 import io.vov.vitamio.Vitamio;
 
 /**
- * 系统播放器
+ * 万能播放器
  */
 public class VitamioVideoPlayer extends Activity implements View.OnClickListener {
 
