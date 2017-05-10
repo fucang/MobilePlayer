@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.widget.TextView;
 
 import com.fucang.mobileplayer.domain.Lyric;
+import com.fucang.mobileplayer.utils.DensityUtil;
 import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class ShowLyricView extends TextView {
     private long currentPositionTime;
 
     // 每行的高
-    private static final int TEXT_HEIGHT = 20;
+    private int TEXT_HEIGHT;
 
     // 画笔
     private Paint currentPaint;
@@ -41,16 +42,16 @@ public class ShowLyricView extends TextView {
     private Paint otherPaint;
 
     // 控件的宽
-    private int width;
+    private float width;
 
     // 控件的高
-    private int height;
+    private float height;
 
     // 高亮时间
-    private long sleepTime;
+    private float sleepTime;
 
     // 时间戳
-    private long timePoint;
+    private float timePoint;
 
     public ShowLyricView(Context context) {
         this(context, null);
@@ -62,7 +63,15 @@ public class ShowLyricView extends TextView {
 
     public ShowLyricView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initView();
+        initView(context);
+    }
+
+    public ArrayList<Lyric> getLyrics() {
+        return lyrics;
+    }
+
+    public void setLyrics(ArrayList<Lyric> lyrics) {
+        this.lyrics = lyrics;
     }
 
     @Override
@@ -72,7 +81,8 @@ public class ShowLyricView extends TextView {
         height = h;
     }
 
-    private void initView() {
+    private void initView(Context context) {
+        TEXT_HEIGHT = DensityUtil.dip2px(context, 20);
         // 创建画笔
         currentPaint = new Paint();
         currentPaint.setColor(Color.GREEN);
@@ -86,27 +96,29 @@ public class ShowLyricView extends TextView {
         otherPaint.setTextSize(20);
         otherPaint.setAntiAlias(true);
         otherPaint.setTextAlign(Paint.Align.CENTER);
-
-        this.lyrics = Lists.newArrayList();
-        for (int i = 0; i < 1000; ++i) {
-            Lyric lyric = new Lyric();
-            lyric.setTimePoint(1000 * i);
-            lyric.setSleepTime(1500 + i);
-            lyric.setContent(i + "=fucang=" + i);
-            lyrics.add(lyric);
-        }
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (lyrics != null && lyrics.size() > 0) {
+            // 缓缓往上推移
+            float plush = 0f;
+            if (sleepTime != 0) {
+                // 缓缓上移
+                // 这一句所花时间 ： 这一句休眠时间 = 这一句要移动的距离 ： 总距离（行高）
+                float delta = ((currentPositionTime - timePoint) / sleepTime) * TEXT_HEIGHT;
+                // 屏幕的坐标 = 行高 + 移动距离
+                plush = TEXT_HEIGHT + delta;
+            }
+            canvas.translate(0, -plush);
+
             // 绘制歌词
             // 绘制当前句
             String currentText = lyrics.get(index).getContent();
             canvas.drawText(currentText, width / 2, height / 2, currentPaint);
             // 绘制前面部分
-            int tempY = height / 2;
+            float tempY = height / 2;
             for (int i = index - 1; i >= 0 && tempY > 0; i--) {
                 String preText = lyrics.get(i).getContent();
                 tempY -= TEXT_HEIGHT;
@@ -128,6 +140,7 @@ public class ShowLyricView extends TextView {
 
     /**
      * 根据当前播放的位置，找出该高亮显示的歌词
+     *
      * @param currentPositionTime
      */
     public void setNextLyric(long currentPositionTime) {

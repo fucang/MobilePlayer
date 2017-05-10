@@ -24,12 +24,15 @@ import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.domain.MediaItem;
 import com.fucang.mobileplayer.service.MusicPlayerService;
 import com.fucang.mobileplayer.utils.Logger;
+import com.fucang.mobileplayer.utils.LyricUtils;
 import com.fucang.mobileplayer.utils.Utils;
 import com.fucang.mobileplayer.view.ShowLyricView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.io.File;
 
 /**
  * Created by 浮滄 on 2017/5/9.
@@ -359,10 +362,34 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
     @Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 0)
     public void showData(MediaItem mediaItem) {
         // 发消息歌词同步 
-        handler.sendEmptyMessage(SHOW_LYRIC);
-        
+        showLyric();
+
         showViewData();
         showPlaymode(false);
+    }
+
+    private void showLyric() {
+        LyricUtils lyricUtils = new LyricUtils();
+        // 传送歌词文件
+        try {
+            String path = service.getAudioPath();
+            path = path.substring(0, path.lastIndexOf("."));
+            File file = new File(path + ".lrc");
+            if (!file.exists()) {
+                file = new File(path + ".krc"); // 酷狗
+            }
+            if (!file.exists()) {
+                file = new File(path + ".txt");
+            }
+            lyricUtils.readLyricFile(file);
+            showLyricView.setLyrics(lyricUtils.getLyrics());
+
+            if (lyricUtils.isExistLyric()) {
+                handler.sendEmptyMessage(SHOW_LYRIC);
+            }
+        } catch (RemoteException e) {
+            Logger.error("获取歌词文件路径错误：" + e.getMessage());
+        }
     }
 
     private void showViewData() {
