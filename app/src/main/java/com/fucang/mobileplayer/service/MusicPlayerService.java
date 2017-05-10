@@ -22,6 +22,8 @@ import com.fucang.mobileplayer.domain.MediaItem;
 import com.fucang.mobileplayer.utils.CacheUtils;
 import com.fucang.mobileplayer.utils.Logger;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -406,7 +408,8 @@ public class MusicPlayerService extends Service {
         @Override
         public void onPrepared(MediaPlayer mediaPlayer) {
             // 通知activity来获取信息——广播
-            notifyChange(COM_FUCANG_MOBILEPLAYER_OPEN_AUDIO);
+//            notifyChange(COM_FUCANG_MOBILEPLAYER_OPEN_AUDIO);
+            EventBus.getDefault().post(mediaItem);
             start();
         }
     }

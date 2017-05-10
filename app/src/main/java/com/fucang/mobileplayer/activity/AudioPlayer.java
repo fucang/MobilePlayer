@@ -5,16 +5,13 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.PersistableBundle;
 import android.os.RemoteException;
-import android.service.restrictions.RestrictionsReceiver;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -24,9 +21,15 @@ import android.widget.Toast;
 
 import com.fucang.mobileplayer.IMusicPlayerService;
 import com.fucang.mobileplayer.R;
+import com.fucang.mobileplayer.domain.MediaItem;
 import com.fucang.mobileplayer.service.MusicPlayerService;
 import com.fucang.mobileplayer.utils.Logger;
 import com.fucang.mobileplayer.utils.Utils;
+import com.fucang.mobileplayer.view.ShowLyricView;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by 浮滄 on 2017/5/9.
@@ -35,6 +38,9 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
 
     // 进度更新
     private static final int PROGRESS = 1;
+
+    // 显示歌词
+    private static final int SHOW_LYRIC = 2;
 
     // true:从状态栏进入，不需要重新播放
     // false：从播放列表进入
@@ -57,7 +63,7 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
     private Button btnAudioNext;
     private Button btnLyrc;
 
-    private MyReceiver receiver;
+    private ShowLyricView showLyricView;
 
     /**
      * Find the Views in the layout<br />
@@ -83,11 +89,14 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
         btnAudioNext = (Button)findViewById( R.id.btn_audio_next );
         btnLyrc = (Button)findViewById( R.id.btn_lyrc );
 
+        showLyricView = (ShowLyricView) findViewById(R.id.showLyricView);
+
         btnAudioPlaymode.setOnClickListener( this );
         btnAudioPre.setOnClickListener( this );
         btnAudioStartPause.setOnClickListener( this );
         btnAudioNext.setOnClickListener( this );
         btnLyrc.setOnClickListener( this );
+
 
         // 设置视频拖动
         seekbarAudio.setOnSeekBarChangeListener(new MyOnSeekBarChangeListener());
@@ -201,7 +210,7 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case PROGRESS:
+                case PROGRESS: // 进度更新
                     try {
                         // 1、得到当前进度
                         int currentPosition = service.getCurrentPosition();
@@ -216,6 +225,21 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
                         Logger.error("发送进度条更新消息错误：" + e.getMessage());
                     }
                     break;
+
+                case SHOW_LYRIC: // 显示歌词
+                    try {
+                        // 1、得到当前进度
+                        long currentPosition = service.getCurrentPosition();
+                        // 把进度传入ShowLyricView并计算该高亮哪一句
+                        showLyricView.setNextLyric(currentPosition);
+                        // 实时的发消息
+                        handler.removeMessages(SHOW_LYRIC);
+                        handler.sendEmptyMessage(SHOW_LYRIC);
+                    } catch (RemoteException e) {
+                        Logger.error("发送歌词更新消息错误：" + e.getMessage());
+                    }
+                    break;
+
                 default:
                     break;
             }
@@ -267,10 +291,19 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
         handler.removeCallbacksAndMessages(null);
 
         // 取消注册广播
-        if (receiver != null) {
-            unregisterReceiver(receiver);
-            receiver = null;
+//        if (receiver != null) {
+//            unregisterReceiver(receiver);
+//            receiver = null;
+//        }
+
+        EventBus.getDefault().unregister(this);
+
+        // 与服务解绑定
+        if (conn != null) {
+            unbindService(conn);
+            conn = null;
         }
+
         super.onDestroy();
     }
 
@@ -287,10 +320,15 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
     private void initData() {
         utils = new Utils();
         // 注册广播
-        receiver = new MyReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(MusicPlayerService.COM_FUCANG_MOBILEPLAYER_OPEN_AUDIO);
-        registerReceiver(receiver, intentFilter);
+//        receiver = new MyReceiver();
+//        IntentFilter intentFilter = new IntentFilter();
+//        intentFilter.addAction(MusicPlayerService.COM_FUCANG_MOBILEPLAYER_OPEN_AUDIO);
+//        registerReceiver(receiver, intentFilter);
+
+        // 1、EventBus注册
+        EventBus.getDefault().register(this);
+
+
     }
 
     private void bindAndStartService() {
@@ -313,9 +351,18 @@ public class AudioPlayer extends Activity implements View.OnClickListener {
     class MyReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            showViewData();
-            showPlaymode(false);
+            showData(null);
         }
+    }
+
+    // 订阅方法
+    @Subscribe(threadMode = ThreadMode.MAIN, sticky = false, priority = 0)
+    public void showData(MediaItem mediaItem) {
+        // 发消息歌词同步 
+        handler.sendEmptyMessage(SHOW_LYRIC);
+        
+        showViewData();
+        showPlaymode(false);
     }
 
     private void showViewData() {
