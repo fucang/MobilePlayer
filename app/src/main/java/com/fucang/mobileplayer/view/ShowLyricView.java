@@ -4,16 +4,13 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.support.test.espresso.core.deps.guava.collect.Lists;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.fucang.mobileplayer.domain.Lyric;
+import com.fucang.mobileplayer.bean.Lyric;
 import com.fucang.mobileplayer.utils.DensityUtil;
-import com.google.common.collect.Maps;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 
 /**

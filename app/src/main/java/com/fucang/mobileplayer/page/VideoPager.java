@@ -23,7 +23,7 @@ import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.activity.SystemVideoPlayer;
 import com.fucang.mobileplayer.adapter.VideoPagerAdapter;
 import com.fucang.mobileplayer.base.BasePager;
-import com.fucang.mobileplayer.domain.MediaItem;
+import com.fucang.mobileplayer.bean.MediaItem;
 import com.fucang.mobileplayer.utils.Logger;
 
 import java.util.ArrayList;

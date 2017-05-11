@@ -12,7 +12,7 @@ import android.view.View;
  * VideoPager
  * AudioPager
  * NetVideoPager
- * NetAudioPager
+ * GroomPager
  * 继承BasePager
  */
 public abstract class BasePager {

@@ -18,7 +18,7 @@ import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.base.BasePager;
 import com.fucang.mobileplayer.base.ReplaceFragment;
 import com.fucang.mobileplayer.page.AudioPager;
-import com.fucang.mobileplayer.page.NetAudioPager;
+import com.fucang.mobileplayer.page.GroomPager;
 import com.fucang.mobileplayer.page.NetVideoPager;
 import com.fucang.mobileplayer.page.VideoPager;
 
@@ -51,7 +51,7 @@ public class MainActivity extends FragmentActivity {
         basePagers.add(new VideoPager(this)); // 添加本地视频页面 0
         basePagers.add(new AudioPager(this)); // 添加本地音频页面 1
         basePagers.add(new NetVideoPager(this)); // 添加网络视频页面 2
-        basePagers.add(new NetAudioPager(this)); // 添加网络音频页面 3
+        basePagers.add(new GroomPager(this)); // 添加网络音频页面 3
 
         // 设置RadioGroup的监听
         rg_bottom_tag.setOnCheckedChangeListener(new MyOnCheckedChangeListener());

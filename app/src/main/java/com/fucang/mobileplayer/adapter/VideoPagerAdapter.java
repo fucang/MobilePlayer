@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fucang.mobileplayer.R;
-import com.fucang.mobileplayer.domain.MediaItem;
+import com.fucang.mobileplayer.bean.MediaItem;
 import com.fucang.mobileplayer.utils.Utils;
 
 import java.util.ArrayList;

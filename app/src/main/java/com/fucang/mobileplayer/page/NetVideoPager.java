@@ -17,7 +17,7 @@ import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.activity.SystemVideoPlayer;
 import com.fucang.mobileplayer.adapter.NetVideoPagerAdapter;
 import com.fucang.mobileplayer.base.BasePager;
-import com.fucang.mobileplayer.domain.MediaItem;
+import com.fucang.mobileplayer.bean.MediaItem;
 import com.fucang.mobileplayer.utils.CacheUtils;
 import com.fucang.mobileplayer.utils.Constants;
 import com.fucang.mobileplayer.utils.Logger;
@@ -135,7 +135,7 @@ public class NetVideoPager extends BasePager {
         super.initData();
         utils = new Utils();
         String saveJson = CacheUtils.getString(context, Constants.NET_VIDEO_URL);
-        if (TextUtils.isEmpty(saveJson)) {
+        if (!TextUtils.isEmpty(saveJson)) {
             processData(saveJson);
         }
         getDataFromNet(); // 联网获取数据

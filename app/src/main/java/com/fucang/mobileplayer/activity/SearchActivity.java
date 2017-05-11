@@ -8,11 +8,10 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.adapter.SearchAdapter;
-import com.fucang.mobileplayer.domain.SearchBean;
+import com.fucang.mobileplayer.bean.SearchBean;
 import com.fucang.mobileplayer.utils.Constants;
 import com.fucang.mobileplayer.utils.Logger;
 import com.google.gson.Gson;

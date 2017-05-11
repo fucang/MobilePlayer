@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.fucang.mobileplayer.IMusicPlayerService;
 import com.fucang.mobileplayer.R;
 import com.fucang.mobileplayer.activity.AudioPlayer;
-import com.fucang.mobileplayer.domain.MediaItem;
+import com.fucang.mobileplayer.bean.MediaItem;
 import com.fucang.mobileplayer.utils.CacheUtils;
 import com.fucang.mobileplayer.utils.Logger;
 

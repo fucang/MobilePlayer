@@ -6,7 +6,7 @@ package com.fucang.mobileplayer.utils;
 
 import android.support.test.espresso.core.deps.guava.collect.Lists;
 
-import com.fucang.mobileplayer.domain.Lyric;
+import com.fucang.mobileplayer.bean.Lyric;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;

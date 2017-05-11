@@ -5,6 +5,7 @@ package com.fucang.mobileplayer.utils;
  */
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 
 /**
  * 根据不同的手机调整歌词的大小
@@ -24,5 +25,13 @@ public class DensityUtil {
     public static int px2dip(Context context, float pxValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
+    }
+
+    public static float getScreenHeight() {
+        return new DisplayMetrics().heightPixels;
+    }
+
+    public static float getScreenWidth() {
+        return new DisplayMetrics().widthPixels;
     }
 }
