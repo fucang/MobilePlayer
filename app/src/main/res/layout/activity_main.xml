@@ -43,7 +43,7 @@
 
         <RadioButton
             android:id="@+id/rb_netaudio"
-            android:text="网络音频"
+            android:text="娱乐推荐"
             android:drawableTop="@drawable/rb_netaudio_drawable_selector"
             style="@style/bottom_tag_style"/>
     </RadioGroup>

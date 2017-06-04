@@ -22,7 +22,7 @@
 
         <include layout="@layout/gif_middle" />
 
-        <include layout="@layout/common_bottom" />
+        <!--<include layout="@layout/common_bottom" />-->
     </LinearLayout>
 
 </LinearLayout>

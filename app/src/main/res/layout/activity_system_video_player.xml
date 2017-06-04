@@ -20,4 +20,10 @@
     <!--缓冲页面-->
     <include layout="@layout/ll_loading" android:id="@+id/ll_loading"/>
 
+    <!--手势识别，改变进度，亮度，音量-->
+    <include layout="@layout/gesture_layout"
+        android:id="@+id/gesture_layout"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"/>
+
 </RelativeLayout>

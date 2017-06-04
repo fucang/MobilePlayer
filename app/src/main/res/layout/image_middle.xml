@@ -14,14 +14,14 @@
         android:textColor="@android:color/black"
         android:textSize="18sp" />
 
-    <ImageView
+    <com.shizhefei.view.largeimage.LargeImageView
         android:scaleType="center"
         android:id="@+id/iv_image_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:layout_margin="10dp"
-        android:src="@drawable/bg_item"/>
+        android:src="@drawable/bg_item"
+        android:layout_margin="10dp"/>
 </LinearLayout>
 
 

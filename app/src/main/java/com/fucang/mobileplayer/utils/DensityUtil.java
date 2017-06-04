@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
  * 根据不同的手机调整歌词的大小
  */
 public class DensityUtil {
+
     /**
      * 根据手机的分辨率从dip单位转换为px（像素）
      */
@@ -27,11 +28,11 @@ public class DensityUtil {
         return (int) (pxValue / scale + 0.5f);
     }
 
-    public static float getScreenHeight() {
-        return new DisplayMetrics().heightPixels;
+    public static int getScreenHeight(Context context) {
+        return context.getResources().getDisplayMetrics().heightPixels;
     }
 
-    public static float getScreenWidth() {
-        return new DisplayMetrics().widthPixels;
+    public static int getScreenWidth(Context context) {
+        return context.getResources().getDisplayMetrics().widthPixels;
     }
 }

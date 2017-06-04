@@ -58,22 +58,22 @@
     </RelativeLayout>
 
 
-    <ImageView
-        android:id="@+id/iv_commant"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:src="@drawable/top_comment" />
+    <!--<ImageView-->
+        <!--android:id="@+id/iv_commant"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="5dp"-->
+        <!--android:src="@drawable/top_comment" />-->
 
-    <TextView
-        android:id="@+id/tv_commant_context"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#11000000"
-        android:gravity="center_vertical"
-        android:paddingLeft="5dp"
-        android:text="楼主，要不是我玩过98，我差点就信了"
-        android:textSize="14sp" />
+    <!--<TextView-->
+        <!--android:id="@+id/tv_commant_context"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:background="#11000000"-->
+        <!--android:gravity="center_vertical"-->
+        <!--android:paddingLeft="5dp"-->
+        <!--android:textSize="14sp" />-->
+    <!--android:text="楼主，要不是我玩过98，我差点就信了"-->
 </LinearLayout>
 
 

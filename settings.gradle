@@ -1,2 +1,2 @@
-include ':app', ':StartAllPlayer', ':vitamio', ':xutils'
+include ':app', ':StartAllPlayer', ':vitamio', ':xutils', ':library'
 include ':xListView'

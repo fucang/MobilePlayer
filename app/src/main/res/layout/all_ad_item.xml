@@ -4,23 +4,23 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:background="#55888888" />
+    <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="10dp"-->
+        <!--android:background="#55888888" />-->
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        android:background="@drawable/bg_activities_item_end_transparent"
-        android:orientation="vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginBottom="20dp"-->
+        <!--android:background="@drawable/bg_activities_item_end_transparent"-->
+        <!--android:orientation="vertical"-->
+        <!--android:paddingLeft="10dp"-->
+        <!--android:paddingRight="10dp">-->
 
 
-        <include layout="@layout/ad_middle" />
+        <!--<include layout="@layout/ad_middle" />-->
 
-    </LinearLayout>
+    <!--</LinearLayout>-->
 
 </LinearLayout>
